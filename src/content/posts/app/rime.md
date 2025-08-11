@@ -54,7 +54,7 @@ lang: zh
 
       现在雾凇拼音输入方案已经准备就绪，但还没有激活。此时输入文字，仍然还在使用原有的拼音方案。
 
-      接下来，只需要按「Ctrl+~」快捷键（其中，「~」键位于 Tab 键的正上方），打开 RIME 的输入方案选择菜单：
+      接下来，只需要按 `「Ctrl+~」` 快捷键（其中，`「~」` 键位于 `Tab` 键的正上方），打开 RIME 的输入方案选择菜单，选择 雾凇拼音 即可。
 
 ## 一些配置
 
@@ -86,6 +86,40 @@ lang: zh
                 page_size: 7 # 修改候选词数量为7
           ```
 
+  3. 使用 Ctrl + space 切换中英文输入法
+
+      1. 禁用系统 Ctrl + space 切换中英文
+
+          ```
+          1. 打开注册表，跳转到HKEY_CURRENT_USER/Control Panel/Input Method/Hot Keys目录下面
+          2. 选择00000070（中文繁体）或者00000010（中文简体）
+          3. 将Key Modifiers的第一个字节设置为00（02c00000->00c00000）
+          4. 将Virtual Key的第一个字节设置为ff（20000000->ff000000）
+          5. 注销用户然后重新登录，搞定
+
+          另外
+          HKEY_CURRENT_USER/Control Panel/Input Method/Hot Keys，保存的是当前用户的快捷键配置；
+          HKEY_USERS.DEFAULT\Control Panel\Input Method\Hot Keys，保存的是默认的快捷键配置；
+          若修改上一个注册表不好使，那就把下面的默认的也修改了
+          ```
+
+      2. 配置 `default.custom.yaml`
+
+          ```
+          patch:
+            # 禁用默认中西文切换
+            "ascii_composer/switch_key/Shift_L": noop
+            "ascii_composer/switch_key/Shift_R": noop
+
+            # 新建 中西文切换 快捷键绑定
+            "key_binder/bindings":
+              - { when: always, accept: "Control+space", toggle: ascii_mode }
+          ```
+
+  4. 解决 方案选单快捷键 在 VSCode 中与打开终端快捷键冲突
+
+      禁用 `default.yaml` 中的 `方案选单相关` 下 `hotkeys` 下的 `Control+grave` 选项，并重新部署
+
 ## 相关文档
 
   + [RIME官方网站](https://rime.im/download/)
@@ -95,4 +129,5 @@ lang: zh
   + [Rime 配置：雾凇拼音](https://dvel.me/posts/rime-ice)
 
   + [RIME + 雾凇拼音，打造绝佳的开源文字输入体验](https://sspai.com/post/89281)
+
 完。
